@@ -10,5 +10,5 @@
 // Con el esquema de este proyecto (ver supabase/schema.sql), solo un
 // usuario logueado (Supabase Auth) puede leer o escribir datos.
 // -----------------------------------------------------------------------
-const SUPABASE_URL = "https://nczsjrbpshgswkwtzjph.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_27f_RSqNvqagUyWfnWbwMg_AQUNAbPd";
+const SUPABASE_URL = "https://utkpbdnvkdmvxyuuqetq.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_SNNBQ-ariLBpI1PUqhbkqg_yvK4fiqb";
