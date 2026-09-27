@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sistema de Gestión de Envíos y Cadetes — Xoxo Lomas</title>
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+  <!-- ==================== PANTALLA DE LOGIN ==================== -->
+  <div id="pantalla-login" class="login-wrap">
+    <form id="form-login" class="card login-card">
+      <h2>🛵 Xoxo Lomas</h2>
+      <p class="ayuda">Ingresá con tu usuario de operador para gestionar pedidos y cadetes.</p>
+      <label>Email
+        <input type="email" id="login-email" required />
+      </label>
+      <label>Contraseña
+        <input type="password" id="login-password" required />
+      </label>
+      <p id="login-error" class="error-msg" hidden></p>
+      <button type="submit" class="btn-primary">Ingresar</button>
+    </form>
+  </div>
+
+  <!-- ==================== APP (oculta hasta iniciar sesion) ==================== -->
+  <div id="app-contenido" hidden>
+  <header class="topbar">
+    <h1>🛵 Sistema de Gestión de Envíos y Cadetes <span class="marca">Xoxo Lomas</span></h1>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="pedidos">Pedidos</button>
+      <button class="tab-btn" data-tab="cadetes">Cadetes</button>
+      <button class="tab-btn" data-tab="productos">Productos</button>
+      <button class="tab-btn" data-tab="cierres">Cierres</button>
+      <button id="btn-logout" class="tab-btn" style="margin-left:auto">Salir</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ==================== TAB: PEDIDOS ==================== -->
+    <section id="tab-pedidos" class="tab-content active">
+      <div class="grid-2">
+        <div class="card">
+          <h2>Nuevo pedido</h2>
+          <form id="form-pedido">
+            <label>Cliente
+              <input type="text" id="p-cliente" required />
+            </label>
+            <label>Dirección
+              <input type="text" id="p-direccion" required />
+            </label>
+            <label>Teléfono
+              <input type="text" id="p-telefono" required />
+            </label>
+            <label>Método de pago
+              <select id="p-metodo-pago">
+                <option>Efectivo</option>
+                <option>Transferencia</option>
+                <option>Tarjeta</option>
+              </select>
+            </label>
+
+            <div class="buscador-productos">
+              <label>Buscar producto
+                <input type="text" id="p-buscar-producto" placeholder="Escribí para buscar..." autocomplete="off" />
+              </label>
+              <ul id="p-resultados-productos" class="resultados"></ul>
+            </div>
+
+            <table class="tabla-items">
+              <thead>
+                <tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th><th></th></tr>
+              </thead>
+              <tbody id="p-items-body"></tbody>
+            </table>
+
+            <p class="total">Total: <span id="p-total">$0</span></p>
+            <button type="submit" class="btn-primary">Crear pedido</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Pedidos activos</h2>
+          <div class="filtros">
+            <select id="filtro-estado">
+              <option value="">Todos</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="En Camino">En Camino</option>
+              <option value="Entregado">Entregado</option>
+              <option value="Cancelado">Cancelado</option>
+              <option value="__cerrados">Cerrados (archivados)</option>
+            </select>
+            <button id="btn-refrescar-pedidos">Actualizar</button>
+          </div>
+          <div id="lista-pedidos" class="lista"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB: CADETES ==================== -->
+    <section id="tab-cadetes" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h2 id="cadete-form-titulo">Nuevo cadete</h2>
+          <form id="form-cadete">
+            <input type="hidden" id="c-id" />
+            <label>Nombre
+              <input type="text" id="c-nombre" required />
+            </label>
+            <label>Apellido
+              <input type="text" id="c-apellido" required />
+            </label>
+            <label>DNI
+              <input type="text" id="c-dni" placeholder="Ej: 34567890" required />
+            </label>
+            <label>Teléfono
+              <input type="text" id="c-telefono" required />
+            </label>
+            <label>Vehículo
+              <select id="c-vehiculo">
+                <option>Moto</option>
+                <option>Auto</option>
+              </select>
+            </label>
+            <label>Modelo
+              <input type="text" id="c-modelo" placeholder="Ej: Honda Wave 110" />
+            </label>
+            <label>Patente
+              <input type="text" id="c-patente" />
+            </label>
+            <button type="submit" class="btn-primary">Guardar cadete</button>
+            <button type="button" id="btn-cancelar-edicion" class="btn-secundario" hidden>Cancelar edición</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Cadetes</h2>
+          <div id="lista-cadetes" class="lista"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB: PRODUCTOS ==================== -->
+    <section id="tab-productos" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h2>Nuevo producto</h2>
+          <form id="form-producto">
+            <label>Nombre
+              <input type="text" id="pr-nombre" required />
+            </label>
+            <label>Categoría
+              <input type="text" id="pr-categoria" />
+            </label>
+            <label>Precio
+              <input type="number" id="pr-precio" step="0.01" required />
+            </label>
+            <label>Stock
+              <input type="number" id="pr-stock" value="0" />
+            </label>
+            <button type="submit" class="btn-primary">Guardar producto</button>
+          </form>
+          <p class="ayuda">
+            ¿Tenés muchos productos? Cargalos por lote con
+            <code>npm run import:productos -- tu-archivo.json</code>
+            (ver README).
+          </p>
+        </div>
+
+        <div class="card">
+          <h2>Catálogo</h2>
+          <div id="lista-productos" class="lista"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB: CIERRES ==================== -->
+    <section id="tab-cierres" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h2>Turnos pendientes de cierre</h2>
+          <p class="ayuda">Turnos con pedidos entregados/cancelados que todavía no se cerraron.</p>
+          <div id="lista-pendientes-cierre" class="lista"></div>
+        </div>
+
+        <div class="card">
+          <h2>Historial de cierres</h2>
+          <div id="lista-cierres" class="lista"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px">
+        <h2>Ventas por turno</h2>
+        <div class="filtros">
+          <label>Desde <input type="date" id="v-desde" /></label>
+          <label>Hasta <input type="date" id="v-hasta" /></label>
+          <label>Turno
+            <select id="v-turno"><option value="">Todos</option></select>
+          </label>
+          <button id="btn-consultar-ventas" class="btn-primary">Consultar</button>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><span>Pedidos entregados</span><strong id="kpi-entregados">0</strong></div>
+          <div class="kpi"><span>Monto recaudado</span><strong id="kpi-monto">$0</strong></div>
+          <div class="kpi"><span>Cancelados</span><strong id="kpi-cancelados">0</strong></div>
+          <div class="kpi"><span>Ticket promedio</span><strong id="kpi-ticket">$0</strong></div>
+        </div>
+
+        <div id="grafico-turnos" class="grafico"></div>
+
+        <div style="overflow-x:auto">
+          <table class="tabla-items">
+            <thead>
+              <tr><th>Fecha</th><th>Turno</th><th>Pedidos</th><th>Entregados</th><th>Cancelados</th><th>En curso</th><th>Recaudado</th><th>Estado</th></tr>
+            </thead>
+            <tbody id="tabla-ventas-body"></tbody>
+          </table>
+        </div>
+
+        <h2 style="margin-top:24px">Entregas por cadete</h2>
+        <div style="overflow-x:auto">
+          <table class="tabla-items">
+            <thead><tr><th>Cadete</th><th>Turno</th><th>Entregas</th><th>Recaudado</th></tr></thead>
+            <tbody id="tabla-cadetes-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/cierres.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

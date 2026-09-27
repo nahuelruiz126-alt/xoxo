@@ -1,0 +1,13 @@
+{
+  "name": "xoxo-lomas-importador",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Script de importacion de productos (Excel/CSV/JSON) a Supabase. El sitio en si (carpeta public/) no necesita build ni Node: se sube tal cual a Netlify.",
+  "scripts": {
+    "import:productos": "node scripts/importar-productos.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,7 @@
+[
+  { "nombre": "Hamburguesa Clasica", "categoria": "Comidas", "precio": 4500, "stock": 50 },
+  { "nombre": "Hamburguesa Doble Cheddar", "categoria": "Comidas", "precio": 6200, "stock": 30 },
+  { "nombre": "Papas Fritas Grandes", "categoria": "Acompañamientos", "precio": 2800, "stock": 60 },
+  { "nombre": "Coca-Cola 500ml", "categoria": "Bebidas", "precio": 1800, "stock": 100 },
+  { "nombre": "Agua Mineral 500ml", "categoria": "Bebidas", "precio": 1200, "stock": 80 }
+]
